@@ -1,25 +1,47 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
+
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Eye, EyeOff } from 'lucide-react';
+import Loading from './loading';
+
 interface IFormInput {
-    Fullname: string
-    Email: string
-    Password: string
+    fullname: string
+    email: string
+    password: string
 }
-const SignUpForm = () => {
+
+interface SignUpFormProps {
+    LoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const SignUpForm = ({ LoadingState }: SignUpFormProps) => {
+    const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
-    const onSubmit: SubmitHandler<IFormInput> = (data) => {
-        console.log(data);
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        try {
+            LoadingState(true);
+            const response = await axios.post("/controller/signup", data);
+            console.log(response.data);
+            router.push("/");
+        } catch (error: any) {
+            console.log(error.response?.data);
+            redirect("/signup/error")
+        } finally {
+            LoadingState(false);
+        }
     }
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
     return (
+
 
         <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto bg-background-light dark:bg-background-dark px-4 sm:px-12 lg:px-20 xl:px-32 py-10">
             <div className="w-full max-w-[480px] flex flex-col gap-6">
@@ -44,31 +66,33 @@ const SignUpForm = () => {
                     <div className="flex-grow border-t border-[#dbe0e6] dark:border-[#2a3845]"></div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit(onSubmit)
+
+                } className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-[#111418] dark:text-[#f0f2f4]">Full Name</label>
-                        <input {...register("Fullname", { required: "Full name is required", maxLength: { value: 20, message: "Max 20 characters" } })} aria-invalid={errors.Fullname ? true : false}
+                        <input {...register("fullname", { required: "Full name is required", maxLength: { value: 20, message: "Max 20 characters" } })} aria-invalid={errors.fullname ? true : false}
                             className="w-full rounded-xl border border-[#dbe0e6] dark:border-[#2a3845] bg-white dark:bg-[#1a2632] px-4 py-3 focus:ring-1 focus:ring-[#137fec] outline-none dark:text-slate-200 text-zinc-700" placeholder="John Doe" type="text" />
-                        {errors.Fullname && <p className="text-red-500 text-xs mt-1">{errors.Fullname.message}</p>}
+                        {errors.fullname && <p className="text-red-500 text-xs mt-1">{errors.fullname.message}</p>}
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-[#111418] dark:text-[#f0f2f4]">Email</label>
-                        <input {...register("Email", {
+                        <input {...register("email", {
                             required: "Email is required",
                             maxLength: { value: 50, message: "Max 50 characters" },
                             pattern: {
                                 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                                 message: "Invalid email format"
                             }
-                        })} aria-invalid={errors.Email ? true : false} className="w-full rounded-xl border border-[#dbe0e6] dark:border-[#2a3845] bg-white dark:bg-[#1a2632] px-4 py-3 focus:ring-1 focus:ring-[#137fec] outline-none dark:text-slate-200 text-zinc-700" placeholder="name@company.com" type="email" />
-                        {errors.Email && <p className="text-red-500 text-xs mt-1">{errors.Email.message}</p>}
+                        })} aria-invalid={errors.email ? true : false} className="w-full rounded-xl border border-[#dbe0e6] dark:border-[#2a3845] bg-white dark:bg-[#1a2632] px-4 py-3 focus:ring-1 focus:ring-[#137fec] outline-none dark:text-slate-200 text-zinc-700" placeholder="name@company.com" type="email" />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-[#111418] dark:text-[#f0f2f4]">Password</label>
                         <div className="relative">
-                            <input {...register("Password", {
+                            <input {...register("password", {
                                 required: "Password is required",
                                 minLength: { value: 8, message: "Minimum 8 characters" },
                                 maxLength: { value: 16, message: "Maximum 16 characters" },
@@ -76,12 +100,12 @@ const SignUpForm = () => {
                                     value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                                     message: "Must include uppercase, lowercase, number and special char"
                                 }
-                            })} aria-invalid={errors.Password ? true : false} className="w-full rounded-xl border border-[#dbe0e6] dark:border-[#2a3845] bg-white dark:bg-[#1a2632] px-4 py-3 pr-10 focus:ring-1 focus:ring-[#137fec] 
-                            outline-none dark:text-slate-200 text-zinc-700" placeholder="Password" type={showPassword?"text":"password"} />
+                            })} aria-invalid={errors.password ? true : false} className="w-full rounded-xl border border-[#dbe0e6] dark:border-[#2a3845] bg-white dark:bg-[#1a2632] px-4 py-3 pr-10 focus:ring-1 focus:ring-[#137fec] 
+                            outline-none dark:text-slate-200 text-zinc-700" placeholder="Password" type={showPassword ? "text" : "password"} />
                             <button onClick={togglePasswordVisibility} type="button" className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <span className="material-symbols-outlined text-[20px]">{showPassword ? <Eye /> : <EyeOff />}</span>
                             </button>
-                            {errors.Password && <p className="text-red-500 text-xs mt-1">{errors.Password.message}</p>}
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                         </div>
                     </div>
 
@@ -94,7 +118,10 @@ const SignUpForm = () => {
                 </div>
             </div>
         </div>
-    );
+
+
+
+    )
 };
 
 export default SignUpForm;

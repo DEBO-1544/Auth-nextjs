@@ -3,30 +3,48 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from "react-hook-form"
-import {Eye,EyeOff} from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from 'react';
-interface dform{
-    email: string,
-    password: string
+import axios from 'axios';
+interface dform {
+  email: string,
+  password: string
 }
-const LoginForm = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const{register,handleSubmit, formState:{errors}}=useForm<dform>();
-    const onsubmit:SubmitHandler<dform>=async(data)=>{
-        console.log(data);
+const LoginForm = ({ loading }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, iserror] = useState("")
+  const router = useRouter()
+  const { register, handleSubmit, formState: { errors } } = useForm<dform>();
+  const onsubmit: SubmitHandler<dform> = async (data) => {
+    try {
+      iserror("") // Clear previous error
+      loading(true)
+      const response = await axios.post("/controller/login", data)
+      loading(false)
+      router.push("/")
+      console.log(response)
+    } catch (err: any) {
+      console.log(err)
+      const msg = err.response?.data?.message || "Invalid Login";
+      iserror(msg)
+      loading(false)
+      alert(msg)
+      
     }
-    const togglePasswordVisibility = () => {
-    setShowPassword(prev=>!prev);
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
   };
   return (
     <div className="w-full lg:w-1/2 flex flex-col h-full bg-white dark:bg-[#101922] overflow-y-auto">
       <div className="flex flex-1 flex-col justify-center items-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full max-w-[440px] flex flex-col gap-8">
-          
+
           {/* Header */}
-         <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 mb-2">
-              
+
               <span className="text-lg font-bold tracking-tight dark:text-white text-shadow-xl/20">CODE-VITA</span>
             </div>
             <h1 className="text-[#111418] dark:text-white text-3xl font-black tracking-[-0.033em]">Welcome back</h1>
@@ -50,46 +68,50 @@ const LoginForm = () => {
               <div className="flex-grow border-t border-[#dbe0e6] dark:border-slate-700"></div>
             </div>
           </div>
-
+          <div className=' flex flex-wrap items-center justify-center shadow-2xs/20 text-red-500 font-semibold'>
+            {error}
+          </div>
           {/* Input Form */}
           <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
               <label className="text-[#111418] dark:text-slate-200 text-sm font-medium">Email Address</label>
-              <input {...register("email",{required:"Email is required",pattern:{value:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,message:"Invalid email"},
-                maxLength:{value:50,message:"Email must be at most 50 characters long"},
-                minLength:{value:5,message:"Email must be at least 5 characters long"}
-              })} aria-invalid={errors.email?true:false}  className="w-full rounded-lg text-[#111418] dark:text-white border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-[15px] focus:ring-2 focus:ring-[#137fec]/20 focus:border-[#137fec] outline-none transition-all" placeholder="name@example.com" type="email"/>
+              <input {...register("email", {
+                required: "Email is required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
+                maxLength: { value: 50, message: "Email must be at most 50 characters long" },
+                minLength: { value: 5, message: "Email must be at least 5 characters long" }
+              })} aria-invalid={errors.email ? true : false} className="w-full rounded-lg text-[#111418] dark:text-white border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-[15px] focus:ring-2 focus:ring-[#137fec]/20 focus:border-[#137fec] outline-none transition-all" placeholder="name@example.com" type="email" />
               {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-[#111418] dark:text-slate-200 text-sm font-medium">Password</label>
               <div className="relative flex items-center">
-                <input {...register("password",{required:"password is required", 
-                minLength:{
-                    value:8,
-                    message:"Password must be at least 8 characters long"
-                },
-                maxLength:{
-                    value:16,
-                    message:"Password must be at most 16 characters long"
-                },
-                pattern:{
-                    value:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    message:"Password must contain at least one lowercase letter, one uppercase letter, one number and one special character"
-                }
-                }) } aria-invalid={errors.password?true:false}
-                
-                
-                className="w-full rounded-lg text-[#111418] dark:text-white border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-[15px] pr-12 focus:ring-2 focus:ring-[#137fec]/20 focus:border-[#137fec] outline-none transition-all" placeholder="Enter your password" type={showPassword?"text":"password"}/>
+                <input {...register("password", {
+                  required: "password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters long"
+                  },
+                  maxLength: {
+                    value: 16,
+                    message: "Password must be at most 16 characters long"
+                  },
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message: "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character"
+                  }
+                })} aria-invalid={errors.password ? true : false}
+
+
+                  className="w-full rounded-lg text-[#111418] dark:text-white border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-slate-800 h-12 px-[15px] pr-12 focus:ring-2 focus:ring-[#137fec]/20 focus:border-[#137fec] outline-none transition-all" placeholder="Enter your password" type={showPassword ? "text" : "password"} />
                 <div className="absolute right-0 top-0 h-full flex items-center pr-3">
-                  <span onClick={togglePasswordVisibility} className=" material-symbols-outlined text-[#617589] cursor-pointer hover:text-[#137fec] text-[20px]">{ showPassword? <Eye/> :<EyeOff/>
-}</span>
+                  <span onClick={togglePasswordVisibility} className=" material-symbols-outlined text-[#617589] cursor-pointer hover:text-[#137fec] text-[20px]">{showPassword ? <Eye /> : <EyeOff />
+                  }</span>
                 </div>
-               
+
               </div>
-             
+
               <div className="flex justify-between">
-                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                 <Link className="text-[#137fec] text-sm font-medium hover:underline" href="/">Forgot password?</Link>
               </div>
             </div>

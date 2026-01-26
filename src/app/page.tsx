@@ -4,7 +4,7 @@ export default function Home() {
   return (
     
     <div>
-      <main className=" bg-neutral-900 font-sans text-slate-200 h-screen">
+      <main className=" bg-neutral-900 font-sans text-slate-200 h-screen flex flex-col items-center justify-center">
         <h1>This is Home Page</h1>
                   <div className="flex gap-2">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded-md"><Link href="/login">login</Link></button>
