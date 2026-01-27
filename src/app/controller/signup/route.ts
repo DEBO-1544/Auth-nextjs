@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import connectDB from '@/dbgonfig/db_conncetion'
+import { sendEmail } from '@/helpers/emailsender'
 export async function POST(req: NextRequest) {
    await connectDB()
    try {
@@ -26,58 +27,50 @@ export async function POST(req: NextRequest) {
       const gensalt = await bcrypt.genSalt(10)
       const hashpassword = await bcrypt.hash(password, gensalt)
       const NewUser = await User.create({
-         fullname: fullname.toLowerCase(),
+         fullname: fullname.toUpperCase(),
          email: email,
          password: hashpassword,
       })
-      const createdUser = await User.findById(NewUser._id).select("-password")
+      const createdUser = await User.findById(NewUser._id).select("-password,-refreshToken")
       if (!createdUser) {
          throw new ApiError(500, "User not created,Try again")
       }
-
-      const Accesstoken = jwt.sign(
-         {
-            id: createdUser._id
-         },
-         process.env.ACCESS_TOKEN_SECRET as string,
-         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY as any
-         }
-      )
-      const RefreshToken = jwt.sign(
-         {
-            id: createdUser._id
-         },
-         process.env.REFRESH_TOKEN_SECRET as string,
-         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY as any
-         }
-      )
-      if (!Accesstoken || !RefreshToken) {
-         throw new ApiError(500, "Token not generated,Try again")
+      const Verfiytoken=jwt.sign({id:createdUser._id},process.env.VERFY_TOKEN_SECRET!,{expiresIn:process.env.VERFY_TOKEN_EXPIRY})
+      if(!Verfiytoken){
+         throw new ApiError(500,"Token not created,Try again")
       }
-      createdUser.refreshToken = RefreshToken
-      await createdUser.save({ validateBeforeSave: false })
+      console.log(Verfiytoken)
+     
+      createdUser.verifyToken=Verfiytoken
+      await createdUser.save({validateBeforeSave:false})
+      const forgetpassword=jwt.sign({id:createdUser._id},process.env.FORGOT_PASSWORD_TOKEN_SECRET!,{expiresIn:process.env.FORGOTPASSWORDEXPIRY})
+      if(!forgetpassword){
+         throw new ApiError(500,"Token not created,Try again")
+      }
+      
+      createdUser.forgotPasswordToken=forgetpassword
+      await createdUser.save({validateBeforeSave:false})
+      const mailsender= await sendEmail(email,Verfiytoken,fullname)
+      if(!mailsender){
+         throw new ApiError(500,"Email not sent,Try again")
+      }
 
-      const response = NextResponse.json(new ApiRes(200, createdUser, "User registered successfully"))
-      response.cookies.set("RefreshToken", RefreshToken, {
-         httpOnly: true,
-         secure: true,
-         sameSite: "strict",
-         maxAge: 10 * 24 * 60 * 60
+      const response = NextResponse.json(new ApiRes(200, createdUser, "User registered successfully"),{status:200}
+   )
+      response.cookies.set("VerifyToken",Verfiytoken,{
+         httpOnly:true,
+         secure:true,
+         sameSite:"strict",
+         maxAge:600
       })
-      response.cookies.set("AccessToken", Accesstoken, {
-         httpOnly: true,
-         secure: true,
-         sameSite: "strict",
-         maxAge: 15 * 60 * 1000
-      })
+      
       return response
 
 
 
    } catch (error: any) {
       console.log(error.message)
+      
       return NextResponse.json(new ApiError(401, error.message),{status:401})
    }
 

@@ -22,15 +22,18 @@ interface SignUpFormProps {
 const SignUpForm = ({ LoadingState }: SignUpFormProps) => {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
+    const [errormsg, seterrormsg] = useState("")
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         try {
             LoadingState(true);
             const response = await axios.post("/controller/signup", data);
             console.log(response.data);
-            router.push("/");
+           
+            router.push(`/signup/email/verify?email=${data.email}`);
         } catch (error: any) {
             console.log(error.response?.data);
-            redirect("/signup/error")
+            seterrormsg(error.response?.data.message)
+          alert(error.response?.data.message)
         } finally {
             LoadingState(false);
         }
@@ -117,6 +120,7 @@ const SignUpForm = ({ LoadingState }: SignUpFormProps) => {
                     <Link href="/login" className="font-semibold text-[#137fec] hover:underline cursor-pointer" >Log in</Link>
                 </div>
             </div>
+            {errormsg && <p className="text-red-500 text-xs mt-1">{errormsg}</p>}
         </div>
 
 

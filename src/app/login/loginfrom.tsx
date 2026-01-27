@@ -12,27 +12,28 @@ interface dform {
 }
 const LoginForm = ({ loading }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, iserror] = useState("")
+  const [errormsg, seterrormsg] = useState("")
   const router = useRouter()
   const { register, handleSubmit, formState: { errors } } = useForm<dform>();
+   let errd=""
   const onsubmit: SubmitHandler<dform> = async (data) => {
     try {
-      iserror("") // Clear previous error
+      // iserror("") // Clear previous error
       loading(true)
       const response = await axios.post("/controller/login", data)
       loading(false)
       router.push("/")
       console.log(response)
     } catch (err: any) {
-      console.log(err)
-      const msg = err.response?.data?.message || "Invalid Login";
-      iserror(msg)
       loading(false)
-      alert(msg)
-      
+      console.log(err.response.data.message)
+      alert(err.response.data.message)
+        seterrormsg(err.response.data.message)
+
     }
   }
 
+        
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
   };
@@ -68,9 +69,13 @@ const LoginForm = ({ loading }) => {
               <div className="flex-grow border-t border-[#dbe0e6] dark:border-slate-700"></div>
             </div>
           </div>
-          <div className=' flex flex-wrap items-center justify-center shadow-2xs/20 text-red-500 font-semibold'>
-            {error}
-          </div>
+          {errormsg && (
+            <div className='flex flex-wrap items-center justify-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'>
+              <p className='text-red-600 dark:text-red-400 font-semibold text-sm text-center'>
+                {errormsg}
+              </p>
+            </div>
+          )}
           {/* Input Form */}
           <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">

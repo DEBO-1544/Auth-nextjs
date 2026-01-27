@@ -26,7 +26,7 @@ export default function Home() {
   const fetchUser = async () => {
     try {
       // 1. Await the response
-      const response = await axios.post("/controller/cheems");
+      const response = await axios.post("/controller/userinfo");
       
       // 2. Axios data is nested in the .data property
      

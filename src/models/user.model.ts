@@ -22,9 +22,7 @@ const userSchema = new mongoose.Schema({
     forgotPasswordToken: {
         type: String,
     },
-    forgotPasswordExpiry: {
-        type: Date,
-    },
+    
     verifyToken: {
         type: String,
     },

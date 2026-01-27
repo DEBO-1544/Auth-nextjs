@@ -7,10 +7,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function  POST(req:NextRequest){
-         await connectToDB()
-         console.log("Login")
+       
+         
          try {
-            console.log("excuting")
+             await connectToDB()
               const reqbody=await req.json()
               const{email,password}=reqbody;
               if(!email){
@@ -27,6 +27,9 @@ export async function  POST(req:NextRequest){
               if(!ispasswordmatch){
                 throw new ApiError(401,"Invalid credentials")
             
+              }
+              if(!isuserexist.isVerified){
+                 throw new ApiError(401,"Users Email is not verified,Please verify your email")
               }
                const Accesstoken=jwt.sign({
                 id:isuserexist._id

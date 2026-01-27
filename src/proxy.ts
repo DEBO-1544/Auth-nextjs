@@ -6,12 +6,25 @@ import { User } from "@/models/user.model";
 
 async function Proxy(req: NextRequest) {
     try {
-        await connectDB()
+        
 
         const Actoken = req.cookies.get("AccessToken")?.value
         const Rtoken = req.cookies.get("RefreshToken")?.value
         const path = req.nextUrl.pathname
-        const forpublic = path === "/login" || path === "/signup"
+        const forpublic = path === "/login" || path === "/signup"||path==="/signup/verifyin122"
+
+        const verifytoken=req.cookies.get("VerifyToken")?.value
+        const verifypath=path==="/signup/email" || path==="/signup/verifyin122"
+
+        if(verifypath ){
+           
+        
+            if(!verifytoken){
+                return NextResponse.redirect(new URL("/signup", req.url))
+            }
+            //after verfication unset verfition filed
+              return NextResponse.next()
+        }
 
         // If user is on public pages and has both tokens, redirect to home
         if (forpublic) {
@@ -73,54 +86,16 @@ async function Proxy(req: NextRequest) {
             }
 
             // If access token exists, verify it
-            if (Actoken) {
-                try {
-                    jwt.verify(Actoken, process.env.ACCESS_TOKEN_SECRET!)
-                    return NextResponse.next()
-                } catch (error) {
-                    // Access token is invalid/expired
-                    if (Rtoken) {
-                        // Try to refresh using refresh token
-                        try {
-                            const decoded = jwt.verify(Rtoken, process.env.REFRESH_TOKEN_SECRET!) as { id: string }
-                            const isUserExist = await User.findById(decoded.id)
-
-                            if (!isUserExist) {
-                                return NextResponse.redirect(new URL("/signup", req.url))
-                            }
-
-                            const NewAccessToken = jwt.sign(
-                                { id: isUserExist._id },
-                                process.env.ACCESS_TOKEN_SECRET!,
-                                { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-                            )
-
-                            const response = NextResponse.next()
-                            response.cookies.set("AccessToken", NewAccessToken, {
-                                httpOnly: true,
-                                secure: process.env.NODE_ENV === "production",
-                                sameSite: "strict",
-                                maxAge: 24 * 60 * 60
-                            })
-
-                            return response
-                        } catch (refreshError) {
-                            console.log("Error refreshing token:", refreshError)
-                            return NextResponse.redirect(new URL("/signup", req.url))
-                        }
-                    } else {
-                        // No refresh token available
-                        return NextResponse.redirect(new URL("/signup", req.url))
-                    }
-                }
+          
+                    } 
+            }catch (error) {
+                console.error("Proxy error:", error)
+                return NextResponse.redirect(new URL("/signup", req.url))
             }
-        }
-
-        return NextResponse.next()
-    } catch (error) {
-        console.error("Proxy error:", error)
-        return NextResponse.redirect(new URL("/signup", req.url))
-    }
+       
+    
+        
+   
 }
 export default Proxy
 
@@ -128,7 +103,11 @@ export const config = {
     matcher: [
         "/login",
         "/signup",
-        "/"
+        "/",
+        "/signup/email",
+        "/signup/verifyin122"
+       
+       
         
     ]
 }
