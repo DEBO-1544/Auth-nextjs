@@ -43,13 +43,7 @@ export async function POST(req: NextRequest) {
      
       createdUser.verifyToken=Verfiytoken
       await createdUser.save({validateBeforeSave:false})
-      const forgetpassword=jwt.sign({id:createdUser._id},process.env.FORGOT_PASSWORD_TOKEN_SECRET!,{expiresIn:process.env.FORGOTPASSWORDEXPIRY})
-      if(!forgetpassword){
-         throw new ApiError(500,"Token not created,Try again")
-      }
-      
-      createdUser.forgotPasswordToken=forgetpassword
-      await createdUser.save({validateBeforeSave:false})
+     
       const mailsender= await sendEmail(email,Verfiytoken,fullname)
       if(!mailsender){
          throw new ApiError(500,"Email not sent,Try again")
@@ -61,7 +55,7 @@ export async function POST(req: NextRequest) {
          httpOnly:true,
          secure:true,
          sameSite:"strict",
-         maxAge:600
+         maxAge:60*60*24*7
       })
       
       return response

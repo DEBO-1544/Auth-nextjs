@@ -9,7 +9,9 @@ export async function GET(req:NextRequest){
      try {
         await connectDB()
         const {searchParams}=new URL(req.url)
+       
      const verftoken=searchParams.get("token")
+
       if(!verftoken){
         throw new ApiError(400,"Token is required")
      }

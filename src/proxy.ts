@@ -10,11 +10,22 @@ async function Proxy(req: NextRequest) {
 
         const Actoken = req.cookies.get("AccessToken")?.value
         const Rtoken = req.cookies.get("RefreshToken")?.value
+         const ForgotpasswordToken=req.cookies.get("ForgotpasswordToken")?.value
+         
         const path = req.nextUrl.pathname
-        const forpublic = path === "/login" || path === "/signup"||path==="/signup/verifyin122"
+        const forgotpasswordpath=path==="/Resetpassword"
+        const forpublic = path === "/login" || path === "/signup"||path==="/signup/verifyin122"||path==="/Resetpassword"
         const verifytoken=req.cookies.get("VerifyToken")?.value
         const verifypath=path==="/signup/email" || path==="/signup/verifyin122"
 
+       
+        if(forgotpasswordpath){
+            if(!ForgotpasswordToken){
+                return NextResponse.redirect(new URL("/login", req.url))
+            }
+            return NextResponse.next()
+        }
+       
         if(verifypath ){
            
         
@@ -87,6 +98,9 @@ async function Proxy(req: NextRequest) {
             // If access token exists, verify it
           
                     } 
+
+
+
             }catch (error) {
                 console.error("Proxy error:", error)
                 return NextResponse.redirect(new URL("/signup", req.url))
@@ -104,6 +118,8 @@ export const config = {
         "/signup",
         "/",
         "/signup/email",
+        "/signup/verifyin122",
+        "/Resetpassword",
         "/signup/verifyin122"
        
        

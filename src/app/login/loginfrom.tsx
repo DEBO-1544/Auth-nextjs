@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from 'react';
 import axios from 'axios';
+import { error } from 'console';
 interface dform {
   email: string,
   password: string
@@ -115,11 +116,16 @@ const LoginForm = ({ loading }) => {
 
               </div>
 
-              <div className="flex justify-between">
+             
+               <div className="flex  justify-end">
+               
+                <Link className="text-[#137fec] text-sm font-medium hover:underline  " href="/login/forgot-password">Forgot password?</Link>
+              </div>
+              <div className='flex  justify-start items-center flex-wrap'>
                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-                <Link className="text-[#137fec] text-sm font-medium hover:underline" href="/">Forgot password?</Link>
               </div>
             </div>
+          
             <input type="submit" value="Log in" className=" cursor-pointer active:scale-95 transition-all flex w-full items-center justify-center rounded-lg h-12 bg-[#137fec] text-white text-base font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 active:scale-[0.99]" />
           </form>
 

@@ -19,16 +19,12 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
     },
-    forgotPasswordToken: {
-        type: String,
-    },
+   
     
     verifyToken: {
         type: String,
     },
-    verifyExpiry: {
-        type: Date,
-    },
+    
     isVerified: {
         type: Boolean,
         default: false,
@@ -37,6 +33,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    Forgotpassword:{
+        type:Boolean,
+        default:false,
+    }
     
 },{
     timestamps:true
