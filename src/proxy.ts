@@ -12,7 +12,6 @@ async function Proxy(req: NextRequest) {
         const Rtoken = req.cookies.get("RefreshToken")?.value
         const path = req.nextUrl.pathname
         const forpublic = path === "/login" || path === "/signup"||path==="/signup/verifyin122"
-
         const verifytoken=req.cookies.get("VerifyToken")?.value
         const verifypath=path==="/signup/email" || path==="/signup/verifyin122"
 
@@ -23,7 +22,7 @@ async function Proxy(req: NextRequest) {
                 return NextResponse.redirect(new URL("/signup", req.url))
             }
             //after verfication unset verfition filed
-              return NextResponse.next()
+             return NextResponse.next()
         }
 
         // If user is on public pages and has both tokens, redirect to home
@@ -39,7 +38,7 @@ async function Proxy(req: NextRequest) {
         if (path === "/") {
             // If no tokens at all, redirect to signup
             if (!Actoken && !Rtoken) {
-                return NextResponse.redirect(new URL("/signup", req.url))
+                return NextResponse.redirect(new URL("/login", req.url))
             }
 
             // If access token is missing but refresh token exists, try to refresh

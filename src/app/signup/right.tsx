@@ -29,7 +29,7 @@ const SignUpForm = ({ LoadingState }: SignUpFormProps) => {
             const response = await axios.post("/controller/signup", data);
             console.log(response.data);
            
-            router.push(`/signup/email/verify?email=${data.email}`);
+            router.push(`/signup/email`);
         } catch (error: any) {
             console.log(error.response?.data);
             seterrormsg(error.response?.data.message)

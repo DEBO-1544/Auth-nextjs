@@ -1,11 +1,15 @@
 import React from 'react'
-
-const Dummypage = () => {
+import Comp from './component'
+export const metadata={
+    title:"Email Verification",
+}
+const EmailVerification = () => {
   return (
     <div>
-        This is dummy page
+        <Comp/>
+       
     </div>
   )
 }
 
-export default Dummypage
+export default EmailVerification

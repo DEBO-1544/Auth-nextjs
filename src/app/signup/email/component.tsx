@@ -9,30 +9,30 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useState,useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+
 import axios from "axios"
 import {Spinner} from "@/components/ui/spinner"
 import { useRouter } from "next/navigation"
-import { Divide } from "lucide-react"
+
 const Component_em_verfiction = () => {
-  const searchParams = useSearchParams()
+//  const searchParams = useSearchParams()
    const [loading,setLoading]=useState(false)
    const [error,setError]=useState(false)
    const [isdisable,isDisable]=useState(true)
    const router = useRouter()
-  const email = searchParams.get("email")
+  
   useEffect(() => {
     
       const is=setTimeout(() => {
       isDisable(false)
-    }, 120000);
+    }, 3000);
     
   }, []);
   async function ResendEmail(){
     try{
        
       setLoading(true)
-      const response = await axios.get(`/controller/resend?email=${email}`)
+      const response = await axios.get(`/controller/resend`)
       setLoading(false)
       setTimeout(() => {
         isDisable(false)

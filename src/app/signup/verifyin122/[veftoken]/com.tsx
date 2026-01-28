@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
-
+import Cookies from 'js-cookie'
 
 const Componet = () => {
 const [isdone,setisdone]=useState("loading")
@@ -16,6 +16,10 @@ const searchParams = useSearchParams();
    useEffect(()=>{
        async function Verifiction(){
         try {
+               const Verifytoken=Cookies.get("VerifyToken")
+             if(!Verifytoken){
+               router.push("/signup")
+             }
             const res=await axios.get(`/controller/emailverify?token=${token}`)
               setisdone("success")
              setTimeout(() => {
