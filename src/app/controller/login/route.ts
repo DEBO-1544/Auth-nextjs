@@ -31,21 +31,27 @@ export async function  POST(req:NextRequest){
               if(!isuserexist.isVerified){
                  throw new ApiError(401,"Users Email is not verified,Please verify your email")
               }
+               const expiryaccestoken=Number(process.env.ACCESS_TOKEN_EXPIRY)
+               const expiryrefreshtoken=Number(process.env.REFRESH_TOKEN_EXPIRY)
+                if(!expiryaccestoken){
+                   throw new ApiError(500,"Access token expiry not configured")
+                }
+                if(!expiryrefreshtoken){
+                   throw new ApiError(500,"Refresh token expiry not configured")
+                }
                const Accesstoken=jwt.sign({
                 id:isuserexist._id
                },process.env.ACCESS_TOKEN_SECRET as string,{
-                expiresIn:process.env.ACCESS_TOKEN_EXPIRY as any
+                expiresIn:expiryaccestoken 
                })
                const RefreshToken=jwt.sign({
                 id:isuserexist._id
                },process.env.REFRESH_TOKEN_SECRET as string,{
-                expiresIn:process.env.REFRESH_TOKEN_EXPIRY as any
+                expiresIn:expiryrefreshtoken
                })
                if(!Accesstoken || !RefreshToken){
                 throw new ApiError(500,"Token not generated,Try again")
                }
-               const refreshExpiry=Number(process.env.REFRESH_TOKEN_EXPIRY)
-               const accessExpiry=Number(process.env.ACCESS_TOKEN_EXPIRY)
                isuserexist.refreshToken=RefreshToken
                await isuserexist.save({validateBeforeSave:false})
                const response=NextResponse.json(new ApiRes(200,isuserexist,"User logged in successfully"))
@@ -53,13 +59,13 @@ export async function  POST(req:NextRequest){
                 httpOnly:true,
                 secure:true,
                 sameSite:"strict",
-                maxAge:refreshExpiry
+                maxAge:expiryrefreshtoken
                })
                response.cookies.set("AccessToken",Accesstoken,{
                 httpOnly:true,
                 secure:true,
                 sameSite:"strict",
-                maxAge:accessExpiry
+                maxAge:expiryaccestoken
                })
                return response
 
