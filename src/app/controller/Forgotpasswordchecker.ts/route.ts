@@ -13,14 +13,15 @@ export async function POST(request: NextRequest) {
         if(!user){
             throw new ApiError(404,"User not found")
         }
-        const ForgotpasswordToken=jwt.sign({id:user._id},process.env.Forgotpassword_TOKEN_SECRET!,{expiresIn:process.env.Forgotpassword_TOKEN_EXPIRY})
+        const ForgotpasswordToken=jwt.sign(
+            {id:user._id},process.env.Forgotpassword_TOKEN_SECRET!,{expiresIn:process.env.Forgotpassword_TOKEN_EXPIRY})
         if(!ForgotpasswordToken){
             throw new ApiError(500,"Failed to generate token")
         }
         
         user.Forgotpassword=true
         await user.save({validateBeforeSave:false})
-        const sendmail=await Forggotpassword(user.email, user._id,user.fullname)
+        const sendmail=await Forggotpassword(user.email, ForgotpasswordToken,user.fullname)
         if(!sendmail){
             throw new ApiError(500,"Failed to send email")
         }

@@ -14,7 +14,7 @@ import axios from "axios";
 export const ResetPassword = () => {
    
    const params=useSearchParams()
-   const id=params.get("id")
+   const token=params.get("token")
   const router=useRouter()
   
 
@@ -79,7 +79,9 @@ export const ResetPassword = () => {
       try {
         setError("")
          setIsSubmitting(true);
-        const res= await axios.post(`/controller/passwordupdater?id=${id}`,{password})
+        const res= await axios.post(`/controller/passwordupdater?token=${token}`,{  
+         password:password,
+        })
         console.log(res)
         setIsSubmitting(false);
         setIsSuccess(true);

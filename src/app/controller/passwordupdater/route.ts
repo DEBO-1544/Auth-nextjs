@@ -4,6 +4,7 @@ import connectToDB from "@/dbgonfig/db_conncetion";
 import { ApiError } from "@/helpers/apierror";
 import { ApiRes } from "@/helpers/apiresponse";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
 
 export async function POST(request: NextRequest) {
     try {
@@ -14,21 +15,26 @@ export async function POST(request: NextRequest) {
             throw new ApiError(400,"Password is required")
         }
         const{searchParams}=new URL(request.url)
-         const id=searchParams.get("id")
-         if(!id){
-            throw new ApiError(400,"Something Went Wrong")
+         const token=searchParams.get("token")
+        if (!token || token === "null" || token === "undefined") {
+  throw new ApiError(400, "Invalid or missing token");
+}
+        const user_id=jwt.verify(token,process.env.Forgotpassword_TOKEN_SECRET!)
+         if(!user_id){
+            throw new ApiError(404,"Token Not Matche")
          }
-         const user=await User.findById(id)
-         if(!user){
+         const isUser=await User.findById(user_id.id)
+         if(!isUser){
             throw new ApiError(404,"User not found")
          }
          const hashedPassword=await bcrypt.hash(password,10)
-         user.password=hashedPassword
-         user.Forgotpassword=false
-         await user.save({validateBeforeSave:false})
+         isUser.password=hashedPassword
+         isUser.Forgotpassword=false
+         await isUser.save({validateBeforeSave:false})
          return NextResponse.json(new ApiRes(200,"User verified Forgot Password successfully"),{status:200})
        
     } catch ( error:any) {
-        return NextResponse.json(new ApiError(500,error),{status:500})
+        console.log(error)
+        return NextResponse.json(new ApiError(500,error.message),{status:500})
     }
 }

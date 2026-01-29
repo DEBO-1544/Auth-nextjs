@@ -1,6 +1,6 @@
 import sendgrid from "@sendgrid/mail"
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY!)
-async function Forggotpassword(email:string, userid:string,name:string){
+async function Forggotpassword(email:string, forgotpasswordtoken:string,name:string){
 
     const Response=await sendgrid.send({
         from:process.env.SENDGRID_EMAIL!,
@@ -109,7 +109,7 @@ async function Forggotpassword(email:string, userid:string,name:string){
       </p>
 
       <div class="button-wrapper">
-        <a href="http://localhost:3000/Resetpassword/user?id=${userid}" class="btn"> Reset Password</a>
+        <a href="http://localhost:3000/Resetpassword/user?token=${forgotpasswordtoken}" class="btn"> Reset Password</a>
       </div>
 
       <p>

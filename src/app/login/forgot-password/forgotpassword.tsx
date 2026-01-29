@@ -79,17 +79,7 @@ export const ForgotPassword = () => {
             </Alert>
           </CardContent>
           <CardFooter className="flex flex-col space-y-3">
-            <Button
-              data-testid="resend-email-button"
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                setIsSubmitted(false);
-                setEmail("");
-              }}
-            >
-              Send another email
-            </Button>
+            
             <Link href="/login" className="w-full">
               <Button variant="ghost" className="w-full" data-testid="back-to-login-button">
                 <ArrowLeft className="w-4 h-4 mr-2" />

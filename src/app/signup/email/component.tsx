@@ -25,7 +25,7 @@ const Component_em_verfiction = () => {
     
       const is=setTimeout(() => {
       isDisable(false)
-    }, 3000);
+    }, 120000);
     
   }, []);
   async function ResendEmail(){
