@@ -6,7 +6,8 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from 'react';
 import axios from 'axios';
-import { error } from 'console';
+
+import { toast } from 'sonner';
 interface dform {
   email: string,
   password: string
@@ -24,11 +25,26 @@ const LoginForm = ({ loading }) => {
       const response = await axios.post("/controller/login", data)
       loading(false)
       router.push("/")
+      toast.success(`Login Successfully`, {position:"top-right",
+         style:{
+          backgroundColor:"#FFFFFF",
+          color:"#22C55E",
+          
+        }
+      })
+      
       console.log(response)
     } catch (err: any) {
       loading(false)
       console.log(err.response.data.message)
-      alert(err.response.data.message)
+      toast.error(err.response.data.message, {position:"top-right",
+        style:{
+          backgroundColor:"#FFFFFF",
+          color:"#EF4444",
+          
+        }
+        
+      })
         seterrormsg(err.response.data.message)
 
     }

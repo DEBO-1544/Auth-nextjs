@@ -4,25 +4,37 @@ import axios from "axios"
 import { Spinner } from "@/components/ui/spinner";
 import { useState ,useEffect} from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"
 
 export default function Home() {
   const [button,isbutton]=useState(true)
+  
   const router=useRouter()
   const logout=async()=>{
          try{
           isbutton(false)
           const res=await axios.post("/controller/logout")
-          router.push("/signup")
-          console.log(res)
+           toast.success("Logout Successfully", {position:"top-right",
+             style:{
+              backgroundColor:"#FFFFFF",
+              color:"#22C55E",
+              
+            }
+          }
+           )
+          setTimeout(()=>{
+            router.push("/signup")
+          },1000)
+         
 
           isbutton(true)
          }catch(error:any){
-            alert(error?.response?.data?.message)
+            toast.error(error?.response?.data?.message)
             isbutton(true)
          }
   }
   const[user,isuser]=useState("")
-   useEffect(() => {
+  useEffect(()=>{
   const fetchUser = async () => {
     try {
       // 1. Await the response
@@ -44,9 +56,9 @@ export default function Home() {
   return (
     
    <div>
-      <main className=" bg-neutral-900 font-sans text-slate-200 min-h-screen  ">
-       
-                 
+      <main className=" bg-neutral-900 font-sans text-slate-200 min-h-screen  "  >
+                   
+                   
              <div className="flex flex-col gap-2 items-start justify-start py-20 mx-12">
                   <div className=" text-5xl  text-zinc-200  text-shadow-md/20  font-serif">
                     Welcome {user} To Home Page

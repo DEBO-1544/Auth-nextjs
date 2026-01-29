@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Eye, EyeOff } from 'lucide-react';
 import Loading from './loading';
+import { toast } from 'sonner';
 
 interface IFormInput {
     fullname: string
@@ -33,7 +34,7 @@ const SignUpForm = ({ LoadingState }: SignUpFormProps) => {
         } catch (error: any) {
             console.log(error.response?.data);
             seterrormsg(error.response?.data.message)
-          alert(error.response?.data.message)
+          toast.error(error.response?.data.message)
         } finally {
             LoadingState(false);
         }
