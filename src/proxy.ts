@@ -67,10 +67,20 @@ async function Proxy(req: NextRequest) {
                     }
 
                     // Generate new access token
+                    const secret=process.env.ACCESS_TOKEN_SECRET
+                    if(!secret){
+                        console.log("Access token secret not configured")
+                        return NextResponse.redirect(new URL("/signup", req.url))
+                    }
+                    const expiry=Number(process.env.ACCESS_TOKEN_EXPIRY)
+                    if(!expiry){
+                        console.log("Access token expiry not configured")
+                        return NextResponse.redirect(new URL("/signup", req.url))
+                    }
                     const NewAccessToken = jwt.sign(
                         { id: isUserExist._id },
-                        process.env.ACCESS_TOKEN_SECRET!,
-                        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+                        secret,
+                        { expiresIn: expiry }
                     )
 
                     if (!NewAccessToken) {

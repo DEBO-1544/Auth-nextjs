@@ -44,6 +44,8 @@ export async function  POST(req:NextRequest){
                if(!Accesstoken || !RefreshToken){
                 throw new ApiError(500,"Token not generated,Try again")
                }
+               const refreshExpiry=Number(process.env.REFRESH_TOKEN_EXPIRY)
+               const accessExpiry=Number(process.env.ACCESS_TOKEN_EXPIRY)
                isuserexist.refreshToken=RefreshToken
                await isuserexist.save({validateBeforeSave:false})
                const response=NextResponse.json(new ApiRes(200,isuserexist,"User logged in successfully"))
@@ -51,13 +53,13 @@ export async function  POST(req:NextRequest){
                 httpOnly:true,
                 secure:true,
                 sameSite:"strict",
-                maxAge:10*24*60*60
+                maxAge:refreshExpiry
                })
                response.cookies.set("AccessToken",Accesstoken,{
                 httpOnly:true,
                 secure:true,
                 sameSite:"strict",
-                maxAge:15 * 60 * 1000
+                maxAge:accessExpiry
                })
                return response
 

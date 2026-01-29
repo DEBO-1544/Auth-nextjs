@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 
 const Component = () => {
   const [isdone, setisdone] = useState<"loading" | "success" | "error">("loading");

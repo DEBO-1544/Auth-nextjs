@@ -12,8 +12,18 @@ export async function GET(req:NextRequest){
           // const {searchParams}=new URL(req.url)
           //const email = searchParams.get("email");
           const Vtoken= req.cookies.get("VerifyToken")?.value
+          if(!Vtoken){
+            throw new ApiError(400,"Token is required");
+          }
          //givng user id
-          const UserId=jwt.verify(Vtoken,process.env.VERFY_TOKEN_SECRET!) 
+         const secret=process.env.VERFY_TOKEN_SECRET
+         if(!secret){
+            throw new ApiError(500,"JWT secret not configured");
+         }
+          const UserId=jwt.verify(Vtoken,secret) 
+          if(typeof UserId === "string"){
+            throw new ApiError(400,"Invalid token");
+          }
           const Fuser= await User.findById(UserId.id)
 
           if(!Fuser){

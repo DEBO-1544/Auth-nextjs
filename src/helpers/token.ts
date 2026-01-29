@@ -6,6 +6,9 @@ export const Userid=(req:NextRequest)=>{
     if(!decodedToken){
         return 
     }
+    if(typeof decodedToken === "string"){
+        return 
+    }
     const userid=decodedToken.id
     if(!userid){
         console.log("Userid not found")

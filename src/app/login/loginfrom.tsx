@@ -12,7 +12,7 @@ interface dform {
   email: string,
   password: string
 }
-const LoginForm = ({ loading }) => {
+const LoginForm = ({ loading }:any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errormsg, seterrormsg] = useState("")
   const router = useRouter()

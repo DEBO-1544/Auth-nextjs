@@ -35,7 +35,16 @@ export async function POST(req: NextRequest) {
       if (!createdUser) {
          throw new ApiError(500, "User not created,Try again")
       }
-      const Verfiytoken=jwt.sign({id:createdUser._id},process.env.VERFY_TOKEN_SECRET!,{expiresIn:process.env.VERFY_TOKEN_EXPIRY})
+      const secret=process.env.VERFY_TOKEN_SECRET
+      if(!secret){
+         throw new ApiError(500,"JWT secret not configured");
+
+      }
+      const expiry=Number(process.env.VERFY_TOKEN_EXPIRY)
+      if(!expiry){
+         throw new ApiError(500,"Token expiry not configured");
+      }
+      const Verfiytoken=jwt.sign({id:createdUser._id},secret,{expiresIn:expiry})
       if(!Verfiytoken){
          throw new ApiError(500,"Token not created,Try again")
       }
