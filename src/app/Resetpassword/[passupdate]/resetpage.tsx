@@ -27,7 +27,7 @@ export const ResetPassword = () => {
   const [error, setError] = useState("");
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: "" });
 
-  const calculatePasswordStrength = (pwd) => {
+  const calculatePasswordStrength = (pwd:string) => {
     let score = 0;
     let feedback = "";
 
