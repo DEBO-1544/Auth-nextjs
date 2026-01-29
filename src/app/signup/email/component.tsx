@@ -1,4 +1,5 @@
 "use client"
+import {toast} from "sonner"
 import {
   Card,
   CardAction,
@@ -33,6 +34,13 @@ const Component_em_verfiction = () => {
        
       setLoading(true)
       const response = await axios.get(`/controller/resend`)
+      toast.success("Email Resend Successfully",{position:"top-right",
+        style:{
+            backgroundColor:"#FFFFFF",
+          color:"#22C55E",
+        }
+      }
+      )
       setLoading(false)
       setTimeout(() => {
         isDisable(false)
