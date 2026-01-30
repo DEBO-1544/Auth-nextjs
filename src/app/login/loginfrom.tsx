@@ -28,19 +28,20 @@ const LoginForm = ({ loading }:any) => {
         }
       )
       
-        setTimeout(()=>{
-          loading(false)
-          router.replace("/")
-        },2000)
-      toast.success(`Login Successfully`, {position:"top-right",
+       if(response.data.success){
+        loading(false)
+       toast.success(`Login Successfully`, {position:"top-right",
          style:{
           backgroundColor:"#FFFFFF",
           color:"#22C55E",
           
         }
       })
+       }
+       window.location.href="/"
+     
       
-      console.log(response)
+     
     } catch (err: any) {
       loading(false)
       console.log(err.response.data.message)
