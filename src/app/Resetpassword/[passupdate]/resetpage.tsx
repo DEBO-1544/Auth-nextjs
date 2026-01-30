@@ -250,11 +250,11 @@ export const ResetPassword = () => {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-3">
+          <CardFooter className="flex flex-col space-y-3 py-5">
             <Button
               data-testid="submit-button"
               type="submit"
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              className="w-full h-11 bg-blue-600 hover:bg-blue-700  text-white font-medium"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
