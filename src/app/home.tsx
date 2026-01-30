@@ -13,7 +13,9 @@ export default function Home() {
   const logout=async()=>{
          try{
           isbutton(false)
-          const res=await axios.post("/controller/logout")
+          const res=await axios.post("/controller/logout",{
+            withCredentials:true
+          })
            toast.success("Logout Successfully", {position:"top-right",
              style:{
               backgroundColor:"#FFFFFF",
@@ -22,9 +24,9 @@ export default function Home() {
             }
           }
            )
-          setTimeout(()=>{
-            router.push("/signup")
-          },1000)
+          if(res.data.success){
+            router.replace("/login")
+          }
          
 
           isbutton(true)
