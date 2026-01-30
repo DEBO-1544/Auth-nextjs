@@ -27,11 +27,11 @@ const LoginForm = ({ loading }:any) => {
           withCredentials:true
         }
       )
-      loading(false)
-       if(response.data.success){
-        router.replace("/")
-        
-       }
+      
+        setTimeout(()=>{
+          loading(false)
+          router.replace("/")
+        },2000)
       toast.success(`Login Successfully`, {position:"top-right",
          style:{
           backgroundColor:"#FFFFFF",
