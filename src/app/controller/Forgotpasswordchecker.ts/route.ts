@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
       secret,
       { expiresIn:expiry }
     );
+    if(!ForgotpasswordToken){
+      throw new ApiError(500, "Failed to generate forgot password token");
+    }
 
     user.Forgotpassword = true;
     await user.save({ validateBeforeSave: false });

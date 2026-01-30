@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const token = searchParams.get("token");
+    const token =decodeURIComponent(
+      searchParams.get("token") || ""
+    );
 
     if (!token || token === "null" || token === "undefined") {
       throw new ApiError(400, "Invalid or missing token");
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-  } catch (error: unknown) {
+  } catch (error:any) {
     console.error(error);
 
     if (error instanceof ApiError) {
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiError(500, "Internal Server Error"),
+      new ApiError(500, error.message),
       { status: 500 }
     );
   }

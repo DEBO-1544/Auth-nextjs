@@ -89,9 +89,9 @@ export const ResetPassword = () => {
            router.push("/login")
         }, 3000);
 
-      } catch (error) {
+      } catch (error:any) {
          console.log(error)
-         setError("Something went wrong")
+         setError(error.response.data.message)
          setIsSubmitting(false)
       }
     }
