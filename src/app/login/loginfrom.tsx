@@ -22,9 +22,16 @@ const LoginForm = ({ loading }:any) => {
     try {
       // iserror("") // Clear previous error
       loading(true)
-      const response = await axios.post("/controller/login", data)
+      const response = await axios.post("/controller/login", data,
+        {
+          withCredentials:true
+        }
+      )
       loading(false)
-      router.push("/")
+       if(response.data.success){
+        router.replace("/")
+        
+       }
       toast.success(`Login Successfully`, {position:"top-right",
          style:{
           backgroundColor:"#FFFFFF",
